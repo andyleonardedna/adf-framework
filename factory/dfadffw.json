@@ -1,0 +1,21 @@
+{
+	"name": "dfadffw",
+	"properties": {
+		"globalParameters": {
+			"subscriptionId": {
+				"type": "string",
+				"value": "4279cf7f-cbd8-4a96-8a39-dde79edd5589"
+			},
+			"resourceGroupName": {
+				"type": "string",
+				"value": "rgadffw"
+			}
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "400982da-139e-4afb-bdb3-453bf25e7cfa",
+		"tenantId": "1c94839e-beb6-4c8a-8735-b11394014c8d"
+	}
+}
