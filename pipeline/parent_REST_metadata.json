@@ -72,20 +72,29 @@
 						{
 							"parameters": [
 								{
-									"name": "applicationName",
+									"name": "appName",
 									"type": "String",
-									"value": "App One",
+									"value": {
+										"value": "@pipeline().parameters.applicationName",
+										"type": "Expression"
+									},
 									"direction": "Input"
 								}
 							],
 							"type": "Query",
-							"text": "Select p.pipelineName\n, ap.ExecutionOrder\nFrom fw.applicationpipeline ap\nJoin fw.[application] a\n  On a.applicationId = ap.applicationId\nJoin fw.pipeline p\n  On p.pipelineId = ap.pipelineId\nWhere a.applicationName = @applicationName\nOrder By ap.ExecutionOrder\n"
+							"text": "exec fw.getApplicationPipelines @appName\n"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
 				}
 			}
 		],
+		"parameters": {
+			"applicationName": {
+				"type": "string",
+				"defaultValue": "app Two"
+			}
+		},
 		"variables": {
 			"pipelineNameArray": {
 				"type": "Array",
