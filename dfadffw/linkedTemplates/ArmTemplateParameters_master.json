@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "dfadffw"
+		},
+		"azSqlPipelineMetadata_password": {
+			"value": ""
+		},
+		"azSqlPipelineMetadata_properties_typeProperties_server": {
+			"value": "svadffw.database.windows.net"
+		},
+		"azSqlPipelineMetadata_properties_typeProperties_database": {
+			"value": "dbadffw"
+		},
+		"azSqlPipelineMetadata_properties_typeProperties_userName": {
+			"value": "adminandy"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

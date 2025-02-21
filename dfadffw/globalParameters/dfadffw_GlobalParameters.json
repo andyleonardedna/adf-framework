@@ -1,0 +1,10 @@
+{
+	"subscriptionId": {
+		"type": "string",
+		"value": "4279cf7f-cbd8-4a96-8a39-dde79edd5589"
+	},
+	"resourceGroupName": {
+		"type": "string",
+		"value": "rgadffw"
+	}
+}
