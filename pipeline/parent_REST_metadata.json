@@ -54,7 +54,14 @@
 			{
 				"name": "Get pipeline list",
 				"type": "Script",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Record executionInstance Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -83,6 +90,135 @@
 							],
 							"type": "Query",
 							"text": "exec fw.getApplicationPipelines @appName\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Record executionInstance Start",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "azSqlPipelineMetadata",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "CurrentTime",
+									"type": "Datetime",
+									"value": {
+										"value": "@utcNow()",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "Status",
+									"type": "String",
+									"value": "Started",
+									"direction": "Input"
+								},
+								{
+									"name": "applicationName",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().parameters.applicationName",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "pipelineName",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "id",
+									"type": "Int32",
+									"value": "0",
+									"direction": "Output"
+								}
+							],
+							"type": "Query",
+							"text": "Insert Into em.executionInstance\n(applicationName, pipelineName, StartTime, [status])\nOutput inserted.id\nValues (@applicationName, @pipelineName, @CurrentTime, @Status)"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Record executionInstance Stop",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "ForEach Child Pipeline",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "azSqlPipelineMetadata",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "endTime",
+									"type": "Datetime",
+									"value": {
+										"value": "@utcNow()",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "status",
+									"type": "String",
+									"value": {
+										"value": "@activity('Web Execute Pipeline via REST').status",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "id",
+									"type": "Int32",
+									"value": {
+										"value": "@activity('Record executionInstance Start').output.resultSets[0].rows[0].id",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								}
+							],
+							"type": "NonQuery",
+							"text": "exec em.UpdateExecutionInstance\n @endTime\n , @status \n , @id"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
