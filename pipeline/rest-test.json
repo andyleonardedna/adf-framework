@@ -1,0 +1,27 @@
+{
+	"name": "rest-test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/78ff08f6-334c-4e53-b737-8b5feaf74ecc/resourcegroups?api-version=2019-10-01"
+				}
+			}
+		],
+		"folder": {
+			"name": "test"
+		},
+		"annotations": []
+	}
+}
