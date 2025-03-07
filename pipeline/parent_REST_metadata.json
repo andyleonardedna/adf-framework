@@ -211,7 +211,7 @@
 									"name": "id",
 									"type": "Int32",
 									"value": {
-										"value": "@activity('Record executionInstance Start').output.resultSets[0].rows[0].id",
+										"value": "@activity('Record Start').output.resultSets[0].rows[0].id",
 										"type": "Expression"
 									},
 									"direction": "Input"
