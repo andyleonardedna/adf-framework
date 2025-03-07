@@ -163,7 +163,7 @@
 				}
 			},
 			{
-				"name": "Record Completion",
+				"name": "Record Succeeded",
 				"type": "Script",
 				"dependsOn": [
 					{
@@ -201,10 +201,66 @@
 								{
 									"name": "status",
 									"type": "String",
+									"value": "Succeeded",
+									"direction": "Input"
+								},
+								{
+									"name": "id",
+									"type": "Int32",
 									"value": {
-										"value": "@activity('Web Execute Pipeline via REST').status",
+										"value": "@activity('Record Start').output.resultSets[0].rows[0].id",
 										"type": "Expression"
 									},
+									"direction": "Input"
+								}
+							],
+							"type": "Query",
+							"text": "Update em.executionInstance\nSet endTime = @endTime\n   , status = @status\nWhere id = @id"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Record Failed",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "ForEach Child Pipeline",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "azSqlPipelineMetadata",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "endTime",
+									"type": "Datetime",
+									"value": {
+										"value": "@utcNow()",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "status",
+									"type": "String",
+									"value": "Failed",
 									"direction": "Input"
 								},
 								{
