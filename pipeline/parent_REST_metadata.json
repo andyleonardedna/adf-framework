@@ -24,7 +24,14 @@
 						{
 							"name": "Web Execute Pipeline via REST",
 							"type": "WebActivity",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Record ApplicationPipeline Start",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -46,6 +53,73 @@
 									"type": "MSI",
 									"resource": "https://management.azure.com"
 								}
+							}
+						},
+						{
+							"name": "Record ApplicationPipeline Start",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "azSqlPipelineMetadata",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "executionid",
+												"type": "Int32",
+												"value": {
+													"value": "@activity('Record Start').output.resultSets[0].rows[0].id",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "applicationpipelineId",
+												"type": "Int32",
+												"value": {
+													"value": "@item().applicationpipelineId",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "startTime",
+												"type": "Datetime",
+												"value": {
+													"value": "@utcNow()",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "status",
+												"type": "String",
+												"value": "Started",
+												"direction": "Input"
+											},
+											{
+												"name": "id",
+												"type": "Int32",
+												"value": "-1",
+												"direction": "Output"
+											}
+										],
+										"type": "Query",
+										"text": "Insert into em.applicationPipelineInstance\n(executionid\n, applicationpipelineId\n, startTime\n, [status])\nOutput inserted.id\nValues\n(@executionid\n, @applicationpipelineId\n, @startTime\n, @status)"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
 							}
 						}
 					]
